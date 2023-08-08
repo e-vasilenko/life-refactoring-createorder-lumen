@@ -7,9 +7,11 @@ use App\Models\Order;
 use App\Models\PayAgent;
 use App\Models\Project;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use JSendResponse\JSendResponse;
+use YooKassa\Client;
 
-class CreateOrderController extends Controller
+class CreateOrderController3 extends Controller
 {
     // В примере используются модели Eloquent\Model
     public function __invoke($request)
@@ -49,6 +51,26 @@ class CreateOrderController extends Controller
         }
         $amount = $amount + $commissionAmount;
 
+        // YooKassa client
+        $client = new Client();
+        $client->setAuth('123456', 'test_123456');
+        $idempotenceKey = Str::uuid()->toString();
+
+        $payAgentOrder = $client->createPayment(
+            [
+                'amount' => [
+                    'value' => $amount,
+                    'currency' => 'RUB',
+                ],
+                'confirmation' => [
+                    'type' => 'redirect',
+                    'return_url' => 'http://billing.local/bill',
+                ],
+                'description' => $request->get("description"),
+            ],
+            $idempotenceKey
+        );
+
         $savedOrder = new Order();
         $savedOrder->fill([
             'account' => $request->get('account'),
@@ -57,6 +79,7 @@ class CreateOrderController extends Controller
             'commission_amount' => $commissionAmount,
             'description' => $request->get('description'),
             'payment_method' => $request->get('payment_method'),
+            'payment' => $payAgentOrder->getId(),
         ]);
 
         $savedOrder->save();

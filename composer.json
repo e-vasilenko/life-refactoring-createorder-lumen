@@ -6,7 +6,9 @@
     "type": "project",
     "require": {
         "php": "^8.0",
-        "laravel/lumen-framework": "^9.0"
+        "laravel/lumen-framework": "^9.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "yoomoney/yookassa-sdk-php": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
