@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use JSendResponse\JSendResponse;
 use YooKassa\Client;
 
-class CreateOrderController3 extends Controller
+class CreateOrderController extends Controller
 {
     // В примере используются модели Eloquent\Model
     public function __invoke($request)
